@@ -20,6 +20,11 @@ async def start_command(message: types.Message):
     await states.StartStates.group_name.set()
 
 
+@dp.message_handler(commands=['help'])
+async def help_command(message: types.Message):
+    await bot.send_message(message.chat.id, "You are loool")
+
+
 @dp.message_handler(state=states.StartStates.group_name)
 async def start_state(message: types.Message, state: FSMContext):
     all_group_names = [_[0] for _ in await sqlite_db.get_all_groups()]
@@ -62,7 +67,7 @@ async def delete_from_group(message: types.Message):
     await message.reply('Группа успешно отвязана', reply=False)
 
 
-@dp.message_handler(commands=['news', 'новости'])
+@dp.message_handler(commands=['news'])
 async def news_command(message: types.Message):
     news = await sqlite_db.get_news()
     for i in news[:3]:
@@ -87,6 +92,6 @@ async def get_question_state(message: types.Message, state: FSMContext):
     await message.reply('Вопрос задан, ждите ответа...', reply=False)
 
 
-@dp.message_handler(commands=['id'])
-async def get_group_id(message: types.Message, state: FSMContext):
-    await message.reply(message.chat.id)
+@dp.message_handler(commands=['id'])  # type(message.chat.id) == int
+async def get_group_id(message: types.Message):
+    await bot.send_message(message.chat.id, f"{message.chat.id}: {type(message.chat.id)}")

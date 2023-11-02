@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from data_base.sqlite_db import get_all_questions
-from create_bot import bot, ADMINS_CHAT_ID
+from create_bot import bot
 from handlers import states
 
 

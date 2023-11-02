@@ -7,13 +7,12 @@ from data_base import sqlite_db
 from keyboards import inline_kb, delete_kb
 from aiogram.dispatcher.filters import Text
 from handlers import sending_messages
-from create_bot import ADMINS_CHAT_ID
 from data_base.sqlite_db import get_data_from_proxy
 
 
 async def add_proxy_data(state, data: dict):
     async with state.proxy() as proxy:
-        for k,v in data.items():
+        for k, v in data.items():
             proxy[k] = v
 
 

@@ -1,0 +1,4 @@
+commands_list = """
+/start
+
+"""
