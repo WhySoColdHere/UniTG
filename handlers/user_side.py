@@ -1,5 +1,5 @@
 from aiogram import types
-from create_bot import bot, dp
+from create_bot import bot, dp, ADMINS_CHAT_ID
 from data_base import sqlite_db
 from aiogram.dispatcher import FSMContext
 from handlers import states
@@ -94,4 +94,9 @@ async def get_question_state(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands=['id'])  # type(message.chat.id) == int
 async def get_group_id(message: types.Message):
+    if message.chat.id == ADMINS_CHAT_ID:
+        await bot.send_message(message.chat.id, "Admin chat")
     await bot.send_message(message.chat.id, f"{message.chat.id}: {type(message.chat.id)}")
+
+
+

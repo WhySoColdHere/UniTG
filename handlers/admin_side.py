@@ -16,7 +16,8 @@ async def add_proxy_data(state, data: dict):
             proxy[k] = v
 
 
-@dp.message_handler(commands=['delete_group'], is_chat_admin=True)
+# @dp.message_handler(commands=['delete_group'], is_chat_admin=True)
+@dp.message_handler(commands=['delete_group'])
 async def delete_group_command(message: types.Message):
     all_groups = await sqlite_db.get_all_groups()
     group_kb = usually_kb.group_keyboard(all_groups)
@@ -37,7 +38,8 @@ async def delete_group_state(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(commands=['create_group'], is_chat_admin=True)
+# @dp.message_handler(commands=['create_group'], is_chat_admin=True)
+@dp.message_handler(commands=['create_group'])
 async def create_group_command(message: types.Message):
     await message.reply('Введите название группы')
     await states.CreateGroupStates.group_name.set()
@@ -50,7 +52,8 @@ async def create_group_state(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(commands=['create_news'], is_chat_admin=True)
+# @dp.message_handler(commands=['create_news'], is_chat_admin=True)
+@dp.message_handler(commands=['create_news'])
 async def create_news(message: types.Message):
     await states.NewsStates.title.set()
     await message.reply('Отправьте заголовок новости', reply=False)
@@ -78,7 +81,8 @@ async def state_image_news(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(commands=['delete_news'], is_chat_admin=True)
+# @dp.message_handler(commands=['delete_news'], is_chat_admin=True)
+@dp.message_handler(commands=['delete_news'])
 async def delete_news(message: types.Message):
     news = await sqlite_db.get_news()
     for i in news:
@@ -95,7 +99,8 @@ async def callback_delete_news(callback: types.CallbackQuery):
     await bot.send_message(callback.message.chat.id, 'Новость успешно удалена!')
 
 
-@dp.message_handler(commands=['create_schedule'], is_chat_admin=True)
+# @dp.message_handler(commands=['create_schedule'], is_chat_admin=True)
+@dp.message_handler(commands=['create_schedule'])
 async def create_schedule(message: types.Message):
     groups = await sqlite_db.get_all_groups()
     await states.ScheduleStates.select_group.set()
@@ -126,7 +131,8 @@ async def state_image_schedule(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(commands=['delete_schedule'], is_chat_admin=True)
+# @dp.message_handler(commands=['delete_schedule'], is_chat_admin=True)
+@dp.message_handler(commands=['delete_schedule'])
 async def delete_schedule(message: types.Message):
     groups = await sqlite_db.get_all_groups()
     kb = usually_kb.group_keyboard(groups)
@@ -148,7 +154,8 @@ async def state_delete_schedule(message: types.Message, state: FSMContext):
         await state.finish()
 
 
-@dp.message_handler(commands=['next_reply'], is_chat_admin=True)
+# @dp.message_handler(commands=['next_reply'], is_chat_admin=True)
+@dp.message_handler(commands=['next_reply'])
 async def next_reply_command(message: types.Message):
     all_qtns = sqlite_db.get_all_questions()
     if all_qtns:

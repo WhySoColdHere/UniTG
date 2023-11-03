@@ -7,8 +7,7 @@ from token_file import token
 storage = MemoryStorage()
 
 bot = Bot(token=token)
-ADMINS_CHAT_ID = 1947491258
-print()
+ADMINS_CHAT_ID = -4000883833
 
 dp = Dispatcher(bot, storage=storage)
 dp.middleware.setup(LoggingMiddleware())
