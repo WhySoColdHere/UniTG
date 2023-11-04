@@ -1,4 +1,0 @@
-commands_list = """
-/start
-
-"""
