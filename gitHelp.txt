@@ -1,2 +1,0 @@
-git clone -b <branchname> <remote-repo-url> --> Копирование определенной ветки
-git reset --hard --> Откатиться до изменений последнего коммита в ветке
