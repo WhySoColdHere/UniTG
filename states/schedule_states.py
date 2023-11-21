@@ -11,7 +11,12 @@ class ScheduleStatesStudents(StatesGroup):
 
 
 class ScheduleStatesTeachers(StatesGroup):
-    pass
+    waiting_for_role = State()
+
+
+class TechnicalStates(StatesGroup):
+    distribute_students_and_teachers = State()
+
 
 # Институт --> уровень подготовки --> Курс --> Форма обучения (оч/заоч/оч-заоч) --> Выбор группы.
 # Парсер.

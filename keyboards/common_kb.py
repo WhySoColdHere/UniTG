@@ -16,8 +16,8 @@ def group_keyboard_common_reply(values_list: list):
         kb.add(types.KeyboardButton(value))
     return kb
 
-
-def group_keyboard_common_inline(values_list: dict):
-    inline_keyboard = [types.InlineKeyboardButton(text=value, callback_data=value) for value in values_list.keys()]
-    ikb = types.InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[inline_keyboard])
-    return ikb
+# Не уверен, будем ли мы использовать inline кнопки
+# def group_keyboard_common_inline(values_list: dict):
+#     inline_keyboard = [types.InlineKeyboardButton(text=value, callback_data=value) for value in values_list.keys()]
+#     ikb = types.InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[inline_keyboard])
+#     return ikb

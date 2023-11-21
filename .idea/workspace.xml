@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2c704f97-7b68-482e-85e4-a2ec75f32419" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_telegram.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_telegram.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/user_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/user_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/states/schedule_states.py" beforeDir="false" afterPath="$PROJECT_DIR$/states/schedule_states.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2XaRwE7epDD5T23hBlFjLqqWs55" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/lavrf/Desktop/all/ProgrammProj/PyCharmProj/UniTG"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\lavrf\Desktop\all\ProgrammProj\PyCharmProj\UniTG\databases\online_database_dir" />
+      <recent name="C:\Users\lavrf\Desktop\all\ProgrammProj\PyCharmProj\UniTG\templates" />
+      <recent name="C:\Users\lavrf\Desktop\all\ProgrammProj\PyCharmProj\UniTG\keyboards" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2c704f97-7b68-482e-85e4-a2ec75f32419" name="Changes" comment="" />
+      <created>1698865440996</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1698865440996</updated>
+      <workItem from="1698865443114" duration="1661000" />
+      <workItem from="1698931446156" duration="4617000" />
+      <workItem from="1698946358682" duration="4336000" />
+      <workItem from="1699017725000" duration="1131000" />
+      <workItem from="1699020503932" duration="5355000" />
+      <workItem from="1699043313069" duration="558000" />
+      <workItem from="1699091435394" duration="4981000" />
+      <workItem from="1699097990686" duration="3240000" />
+      <workItem from="1699205291171" duration="4311000" />
+      <workItem from="1699359911357" duration="7083000" />
+      <workItem from="1699622807420" duration="72000" />
+      <workItem from="1700056140816" duration="8269000" />
+      <workItem from="1700072684880" duration="2143000" />
+      <workItem from="1700078303009" duration="1290000" />
+      <workItem from="1700133116822" duration="2121000" />
+      <workItem from="1700135247449" duration="2663000" />
+      <workItem from="1700144343988" duration="35000" />
+      <workItem from="1700145790106" duration="1749000" />
+      <workItem from="1700149503648" duration="1022000" />
+      <workItem from="1700163326188" duration="53000" />
+      <workItem from="1700318018572" duration="1717000" />
+      <workItem from="1700331896999" duration="1341000" />
+      <workItem from="1700558766758" duration="2060000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/UniTG$temp.coverage" NAME="temp Coverage Results" MODIFIED="1700137869827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/UniTG$create_bot.coverage" NAME="create_bot Coverage Results" MODIFIED="1698942313807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/UniTG$user_side.coverage" NAME="user_side Coverage Results" MODIFIED="1698942298003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
+    <SUITE FILE_PATH="coverage/UniTG$user_handlers.coverage" NAME="user_handlers Coverage Results" MODIFIED="1700560593356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
+    <SUITE FILE_PATH="coverage/UniTG$common_kb.coverage" NAME="common_kb Coverage Results" MODIFIED="1699366496887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/keyboards" />
+    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1700560839447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

@@ -3,6 +3,8 @@ from keyboards import common_kb, common_keyboard_names
 from create_bot import bot, dp
 from aiogram.dispatcher import FSMContext
 from states.schedule_states import ScheduleStatesStudents
+from databases.online_database_dir.online_database import insert_into
+from time import asctime, localtime
 
 DATA = []
 
@@ -10,11 +12,17 @@ DATA = []
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
     await bot.send_message(message.chat.id, 'Здарова! Бот твоей шараги. Помощь по командам /help')
+    insert_into(message.chat.id, asctime(localtime()))
 
 
 @dp.message_handler(commands=['help'])
 async def help_command(message: types.Message):
     await bot.send_message(message.chat.id, "You are loool")
+
+
+# @dp.message_handler(commands=['get_visits'])
+# async def get_online_command(message: types.Message):
+#     await bot.send_message(message.chat.id, f"За сегодня нас посетило {VISITS_COUNT} человек")
 
 
 #######################################
