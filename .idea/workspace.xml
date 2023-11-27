@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2c704f97-7b68-482e-85e4-a2ec75f32419" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_telegram.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_telegram.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/online_database_dir/OnlineUniTG.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/online_database_dir/online_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/online_database_dir/online_database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/user_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/user_handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/states/schedule_states.py" beforeDir="false" afterPath="$PROJECT_DIR$/states/schedule_states.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,9 +40,17 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "last_opened_file_path": "C:/Users/lavrf/Desktop/all/ProgrammProj/PyCharmProj/UniTG"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\lavrf\Desktop\all\ProgrammProj\PyCharmProj\UniTG\databases\schedule_database" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\lavrf\Desktop\all\ProgrammProj\PyCharmProj\UniTG\databases\online_database_dir" />
       <recent name="C:\Users\lavrf\Desktop\all\ProgrammProj\PyCharmProj\UniTG\templates" />
@@ -78,7 +87,16 @@
       <workItem from="1700163326188" duration="53000" />
       <workItem from="1700318018572" duration="1717000" />
       <workItem from="1700331896999" duration="1341000" />
-      <workItem from="1700558766758" duration="2060000" />
+      <workItem from="1700558766758" duration="3472000" />
+      <workItem from="1700590745694" duration="1223000" />
+      <workItem from="1700754804790" duration="1968000" />
+      <workItem from="1700904310148" duration="7947000" />
+      <workItem from="1700928764076" duration="209000" />
+      <workItem from="1700934500192" duration="600000" />
+      <workItem from="1700943952846" duration="106000" />
+      <workItem from="1701023404107" duration="4557000" />
+      <workItem from="1701101508122" duration="369000" />
+      <workItem from="1701105663388" duration="3250000" />
     </task>
     <servers />
   </component>
@@ -100,8 +118,9 @@
     <SUITE FILE_PATH="coverage/UniTG$temp.coverage" NAME="temp Coverage Results" MODIFIED="1700137869827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/UniTG$create_bot.coverage" NAME="create_bot Coverage Results" MODIFIED="1698942313807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/UniTG$user_side.coverage" NAME="user_side Coverage Results" MODIFIED="1698942298003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
-    <SUITE FILE_PATH="coverage/UniTG$user_handlers.coverage" NAME="user_handlers Coverage Results" MODIFIED="1700560593356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
+    <SUITE FILE_PATH="coverage/UniTG$user_handlers.coverage" NAME="user_handlers Coverage Results" MODIFIED="1700906186302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
+    <SUITE FILE_PATH="coverage/UniTG$online_database.coverage" NAME="online_database Coverage Results" MODIFIED="1701108531975" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/databases/online_database_dir" />
     <SUITE FILE_PATH="coverage/UniTG$common_kb.coverage" NAME="common_kb Coverage Results" MODIFIED="1699366496887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/keyboards" />
-    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1700560839447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1701108298088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
