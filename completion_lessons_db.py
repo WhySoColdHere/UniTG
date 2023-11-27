@@ -3,7 +3,6 @@ selenium
 requests
 beautifulsoup4
 lxml
-Парсинг только групп, для парсинга уроков будет completion_lessons_db.py
 """
 from bs4 import BeautifulSoup
 from selenium import webdriver

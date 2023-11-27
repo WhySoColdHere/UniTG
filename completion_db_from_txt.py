@@ -1,3 +1,4 @@
+"""В этом файле мы считыем группы с group_pars.txt и заполняем дб"""
 import sqlite3 as sq
 from time import sleep
 def completion_db():
