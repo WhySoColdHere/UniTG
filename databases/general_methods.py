@@ -5,7 +5,7 @@ def cur_exe(command, connect):
         cur.execute(command)
 
 
-# Используется для возвращения результата выполнения определенной команды
+# Используется для возвращения результата выполнения переданной команды
 def cur_exe_return(command, connect):
     with connect as con:
         cur = con.cursor()

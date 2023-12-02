@@ -27,8 +27,15 @@ def get_julian_day():
 
 
 def insert_into(telegram_id_value):
-    cur_exe(f"""INSERT INTO Users (telegram_id, last_usage) VALUES ('{telegram_id_value}', {get_julian_day()})""",
-            connector_online_db)
+    info = [i for i in cur_exe_return(f"""
+        SELECT * FROM users WHERE telegram_id='{telegram_id_value}' AND last_usage={get_julian_day()}""",
+                                      connector_online_db)]
+    # Если записи, идентичной добавляемой в бд нет, то вставляем запись, все норм.
+    if len(info) == 0:
+        cur_exe(f"""INSERT INTO Users (telegram_id, last_usage) VALUES ('{telegram_id_value}', {get_julian_day()})""",
+                connector_online_db)
+    del info
+
     # Надо реализовать удаление из таблицы дубликатов и строк, last_usage которых, > DAYS_TO_STORE
 
 

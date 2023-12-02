@@ -5,7 +5,6 @@ from aiogram.dispatcher import FSMContext
 from states.schedule_states import ScheduleStatesStudents
 from states.get_online_states import OnlineStates
 from databases.online_database_dir.online_database import insert_into, get_online, DAYS_TO_STORE
-
 # from databases.schedule_database_dir.rudn_database import get_schedule, select_notes
 
 DATA = []
@@ -54,15 +53,7 @@ async def kinda_validator_st(message, elems, err_message):
         return
 
 
-# @dp.message_handler(commands=['temp_schedule'])
-# async def temp_schedule(message: types.Message):
-#     await bot.send_message(message.chat.id, 'mess', reply_markup=common_kb.group_keyboard_common_reply(
-#         common_keyboard_names.levels_of_preparation()))
-#
-#     select_notes("""SELECT * FROM Faculties WHERE""")
-
-
-@dp.message_handler(commands=['show_schedule'], state='*')
+@dp.message_handler(commands=['create_schedule'], state='*')
 async def institute_schedule_st(message: types.Message, state: FSMContext):
     await bot.send_message(message.chat.id, 'Выбери уровень подготовки.',
                            reply_markup=common_kb.group_keyboard_common_reply(
