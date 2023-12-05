@@ -7,6 +7,7 @@
       <change beforePath="$PROJECT_DIR$/databases/online_database_dir/online_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/online_database_dir/online_database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/databases/schedule_database_dir/rudn_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/schedule_database_dir/rudn_database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/user_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/user_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identifier.sqlite" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +99,7 @@
       <workItem from="1701101508122" duration="369000" />
       <workItem from="1701105663388" duration="3565000" />
       <workItem from="1701549536807" duration="2812000" />
-      <workItem from="1701784404654" duration="2124000" />
+      <workItem from="1701784404654" duration="2752000" />
     </task>
     <servers />
   </component>
@@ -123,6 +124,6 @@
     <SUITE FILE_PATH="coverage/UniTG$user_handlers.coverage" NAME="user_handlers Coverage Results" MODIFIED="1700906186302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
     <SUITE FILE_PATH="coverage/UniTG$online_database.coverage" NAME="online_database Coverage Results" MODIFIED="1701784788390" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/databases/online_database_dir" />
     <SUITE FILE_PATH="coverage/UniTG$common_kb.coverage" NAME="common_kb Coverage Results" MODIFIED="1699366496887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/keyboards" />
-    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1701788103318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1701788510947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
