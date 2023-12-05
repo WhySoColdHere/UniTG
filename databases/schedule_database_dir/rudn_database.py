@@ -11,7 +11,7 @@ def connect_schedule_database():
         raise ConnectionError("Schedule database is not connected")
 
 
-def get_schedule(data: list):
+def insert_schedule_into_db(data: list):
     # Честно? Не ебу как это дело реализовывать без заполненной бд
     pass
     # temp = cur_exe_return("""SELECT * FROM Users""")

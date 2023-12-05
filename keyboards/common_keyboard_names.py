@@ -1,5 +1,5 @@
-def roles():
-    return ["Студент", "Преподаватель"]
+# def roles():
+#     return ["Студент", "Преподаватель"]
 
 
 def institutes():

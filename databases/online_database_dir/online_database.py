@@ -26,7 +26,7 @@ def get_julian_day():
     return int(list(*cur_exe_return(f"""SELECT julianday('{datetime.now().date()}')""", connector_online_db))[0])
 
 
-def insert_into(telegram_id_value):
+def insert_into_online_db(telegram_id_value):
     # Удаляем все записи, хранящиеся более чем DAYS_TO_STORE дней. Начинается отчет с текущего дня.
     cur_exe(f"""DELETE FROM Users WHERE {get_julian_day() + 1} - last_usage > {DAYS_TO_STORE}""", connector_online_db)
 
