@@ -27,16 +27,17 @@ def get_julian_day():
 
 
 def insert_into(telegram_id_value):
-    info = [i for i in cur_exe_return(f"""
-        SELECT * FROM users WHERE telegram_id='{telegram_id_value}' AND last_usage={get_julian_day()}""",
-                                      connector_online_db)]
+    # Удаляем все записи, хранящиеся более чем DAYS_TO_STORE дней. Начинается отчет с текущего дня.
+    cur_exe(f"""DELETE FROM Users WHERE {get_julian_day() + 1} - last_usage > {DAYS_TO_STORE}""", connector_online_db)
+
     # Если записи, идентичной добавляемой в бд нет, то вставляем запись, все норм.
+    info = [i for i in cur_exe_return(f"""
+        SELECT * FROM Users WHERE telegram_id='{telegram_id_value}' AND last_usage={get_julian_day()}""",
+                                      connector_online_db)]
     if len(info) == 0:
         cur_exe(f"""INSERT INTO Users (telegram_id, last_usage) VALUES ('{telegram_id_value}', {get_julian_day()})""",
                 connector_online_db)
     del info
-
-    # Надо реализовать удаление из таблицы дубликатов и строк, last_usage которых, > DAYS_TO_STORE
 
 
 def get_online(period):

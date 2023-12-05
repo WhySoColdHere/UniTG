@@ -10,4 +10,3 @@ bot = Bot(token=token)
 
 dp = Dispatcher(bot, storage=storage)
 dp.middleware.setup(LoggingMiddleware())
-print("create_bot.py executed successfully")

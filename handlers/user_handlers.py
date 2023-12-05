@@ -5,6 +5,7 @@ from aiogram.dispatcher import FSMContext
 from states.schedule_states import ScheduleStatesStudents
 from states.get_online_states import OnlineStates
 from databases.online_database_dir.online_database import insert_into, get_online, DAYS_TO_STORE
+
 # from databases.schedule_database_dir.rudn_database import get_schedule, select_notes
 
 DATA = []
@@ -36,7 +37,7 @@ async def get_online_command(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=OnlineStates.waiting_for_period)
-async def course_schedule_st(message: types.Message, state: FSMContext):
+async def get_online_FSM(message: types.Message, state: FSMContext):
     if 0 < int(message.text) <= DAYS_TO_STORE:
         await bot.send_message(message.chat.id, f"Онлайн за указанный период: {get_online(message.text)}.")
     else:
@@ -47,74 +48,68 @@ async def course_schedule_st(message: types.Message, state: FSMContext):
 
 #######################################
 
-async def kinda_validator_st(message, elems, err_message):
-    if message.text not in elems:
-        await bot.send_message(message.chat.id, err_message)
-        return
-
-
 @dp.message_handler(commands=['create_schedule'], state='*')
 async def institute_schedule_st(message: types.Message, state: FSMContext):
-    await bot.send_message(message.chat.id, 'Выбери уровень подготовки.',
-                           reply_markup=common_kb.group_keyboard_common_reply(
-                               common_keyboard_names.levels_of_preparation()))
+    # await bot.send_message(message.chat.id, 'Выбери уровень подготовки.',
+    #                        reply_markup=common_kb.group_keyboard_common_reply(
+    #                            common_keyboard_names.levels_of_preparation()))
+    await bot.send_message(message.chat.id, 'Выбери уровень подготовки.')
     await state.set_state(ScheduleStatesStudents.waiting_for_level_of_preparation.state)
     insert_into(message.chat.id)
 
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_level_of_preparation)
 async def course_schedule_st(message: types.Message, state: FSMContext):
-    await kinda_validator_st(message, common_keyboard_names.levels_of_preparation(),
-                             "Выберите существующий уровень подготовки!")
     await state.update_data(level_of_preparation_st=message.text)
     DATA.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите институт.',
-                           reply_markup=common_kb.group_keyboard_common_reply(
-                               common_keyboard_names.institutes()))
+    # await bot.send_message(message.chat.id, 'Выберите институт.',
+    #                        reply_markup=common_kb.group_keyboard_common_reply(
+    #                            common_keyboard_names.institutes()))
+
+    await bot.send_message(message.chat.id, 'Выберите институт.')
     await state.set_state(ScheduleStatesStudents.waiting_for_institute.state)
 
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_institute)
 async def education_form_schedule_st(message: types.Message, state: FSMContext):
-    await kinda_validator_st(message, common_keyboard_names.institutes(), "Выберите существующий институт!")
     await state.update_data(course_st=message.text)
     DATA.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите курс.',
-                           reply_markup=common_kb.group_keyboard_common_reply(
-                               common_keyboard_names.courses()))
+    # await bot.send_message(message.chat.id, 'Выберите курс.',
+    #                        reply_markup=common_kb.group_keyboard_common_reply(
+    #                            common_keyboard_names.courses()))
+
+    await bot.send_message(message.chat.id, 'Выберите курс.')
     await state.set_state(ScheduleStatesStudents.waiting_for_course.state)
 
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_course)
 async def group_schedule_st(message: types.Message, state: FSMContext):
-    await kinda_validator_st(message, common_keyboard_names.courses(),
-                             "Выберите существующий курс!")
     await state.update_data(educational_form_st=message.text)
     DATA.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите форму обучения.',
-                           reply_markup=common_kb.group_keyboard_common_reply(
-                               common_keyboard_names.education_forms()))
+    # await bot.send_message(message.chat.id, 'Выберите форму обучения.',
+    #                        reply_markup=common_kb.group_keyboard_common_reply(
+    #                            common_keyboard_names.education_forms()))
+    await bot.send_message(message.chat.id, 'Выберите форму обучения.')
     await state.set_state(ScheduleStatesStudents.waiting_for_educational_form.state)
 
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_educational_form)
 async def final_schedule_st(message: types.Message, state: FSMContext):
-    await kinda_validator_st(message, common_keyboard_names.education_forms(), "Выберите существующую форму обучения!")
     await state.update_data(group_st=message.text)
     DATA.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите группу.',
-                           reply_markup=common_kb.group_keyboard_common_reply(
-                               common_keyboard_names.groups()))
+    # await bot.send_message(message.chat.id, 'Выберите группу.',
+    #                        reply_markup=common_kb.group_keyboard_common_reply(
+    #                            common_keyboard_names.groups()))
+    await bot.send_message(message.chat.id, 'Выберите группу.')
     await state.set_state(ScheduleStatesStudents.waiting_for_group.state)
 
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_group)
 async def final_schedule_st(message: types.Message, state: FSMContext):
-    await kinda_validator_st(message, common_keyboard_names.groups(), "Выбери существующую группу!")
     await state.update_data(group_st=message.text)
     DATA.append(message.text)
 
@@ -127,9 +122,12 @@ async def final_schedule_st(message: types.Message, state: FSMContext):
     # Как только мы его получаем, сразу обращаемся к бд, и выводим остальную инфу, на основе предыдущего 'узла', тк
     # в их расписании все связано.
 
-# @dp.message_handler(commands=['show_schedule'], state='*')
-# async def role_schedule_st(message: types.Message, state: FSMContext):
-#     await bot.send_message(message.chat.id, 'Выбери роль',
-#                            reply_markup=common_kb.group_keyboard_common_reply(
-#                                common_keyboard_names.roles()))
-#     await state.set_state(ScheduleStatesStudents.waiting_for_role.state)
+# Валидатор
+# async def kinda_validator_st(message, elems, err_message):
+#     if message.text not in elems:
+#         await bot.send_message(message.chat.id, err_message)
+#         return
+
+# Пример использования валидатора. Пока что не будем с ним сношаться.
+# await kinda_validator_st(message, common_keyboard_names.levels_of_preparation(),
+#                          "Выберите существующий уровень подготовки!")
