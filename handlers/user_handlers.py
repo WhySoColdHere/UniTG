@@ -4,6 +4,7 @@ from create_bot import bot, dp
 from aiogram.dispatcher import FSMContext
 from states.schedule_states import ScheduleStatesStudents
 from states.get_online_states import OnlineStates
+from states.client_schedule_states import ClientScheduleStates
 from databases.online_database_dir.online_database import insert_into_online_db, get_online, DAYS_TO_STORE
 from databases.client_schedule_database_dir.client_schedule_database import insert_into_client_db, get_client_schedule
 
@@ -12,29 +13,37 @@ from databases.client_schedule_database_dir.client_schedule_database import inse
 DATA = []
 
 
+def transfer_data(data):
+    return data
+
+
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
-    await bot.send_message(message.chat.id, 'Здарова! Бот твоей шараги. Помощь по командам /help.')
     insert_into_online_db(message.chat.id)
+
+    await bot.send_message(message.chat.id, 'Здарова! Бот твоей шараги. Помощь по командам /help.')
 
 
 @dp.message_handler(commands=['help'])
 async def help_command(message: types.Message):
-    await bot.send_message(message.chat.id, "You are loool.")
     insert_into_online_db(message.chat.id)
+
+    await bot.send_message(message.chat.id, "You are loool.")
 
 
 @dp.message_handler(commands=['get_id'])
 async def get_id(message: types.Message):
-    await bot.send_message(message.chat.id, f"id: {message.chat.id}.")
     insert_into_online_db(message.chat.id)
+
+    await bot.send_message(message.chat.id, f"id: {message.chat.id}.")
 
 
 @dp.message_handler(commands=['get_online'], state='*')
 async def get_online_command(message: types.Message, state: FSMContext):
+    insert_into_online_db(message.chat.id)
+
     await bot.send_message(message.chat.id, 'Укажите период, за которой необходимо вывести статистику.')
     await state.set_state(OnlineStates.waiting_for_period.state)
-    insert_into_online_db(message.chat.id)
 
 
 @dp.message_handler(state=OnlineStates.waiting_for_period)
@@ -51,9 +60,9 @@ async def get_online_FSM(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands=['create_schedule'], state='*')
 async def institute_schedule_st(message: types.Message, state: FSMContext):
+    insert_into_online_db(message.chat.id)
     await bot.send_message(message.chat.id, 'Выбери уровень подготовки.')
     await state.set_state(ScheduleStatesStudents.waiting_for_level_of_preparation.state)
-    insert_into_online_db(message.chat.id)
 
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_level_of_preparation)
@@ -97,8 +106,7 @@ async def final_schedule_st(message: types.Message, state: FSMContext):
     await state.update_data(group_st=message.text)
     DATA.append(message.text)
 
-    insert_into_client_db(message.chat.id, DATA)
-    await bot.send_message(message.chat.id, DATA)
+    await bot.send_message(message.chat.id, insert_into_client_db(message.chat.id, DATA))
     await state.finish()
 
 
@@ -120,9 +128,21 @@ async def final_schedule_st(message: types.Message, state: FSMContext):
 ####################################### <Create_schedule\>
 
 ####################################### <Show_my_schedule>
-@dp.message_handler(commands=['show_my_schedule'])
-async def show_client_schedule(message: types.Message):
-    await bot.send_message(message.chat.id, get_client_schedule(message.chat.id))
+@dp.message_handler(commands=['show_my_schedule'], state='*')
+async def show_client_schedule(message: types.Message, state: FSMContext):
     insert_into_online_db(message.chat.id)
+    schedule = get_client_schedule(message.chat.id)
+    if type(schedule) == str:
+        await bot.send_message(message.chat.id, schedule)
+        return
+    else:
+        await bot.send_message(message.chat.id, 'Выберите расписание.',
+                               reply_markup=common_kb.group_keyboard_dict_reply(schedule, "key"))
+        await state.set_state(ClientScheduleStates.waiting_for_schedule.state)
 
+
+@dp.message_handler(state=ClientScheduleStates.waiting_for_schedule)
+async def show_client_schedule_wait_for_schedule(message: types.Message, state: FSMContext):
+    print(message.text)
+    await state.finish()
 ####################################### <Show_my_schedule>
