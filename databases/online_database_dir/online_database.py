@@ -42,6 +42,6 @@ def insert_into_online_db(telegram_id_value):
 
 def get_online(period):
     my_set = {i for i in cur_exe_return(f"""
-    SELECT telegram_id, last_usage FROM Users WHERE last_usage >= {get_julian_day() - int(period)}
+    SELECT telegram_id, last_usage FROM Users WHERE last_usage >= {get_julian_day() - int(period) + 1}
     """, connector_online_db)}
-    return len(my_set)
+    return my_set
