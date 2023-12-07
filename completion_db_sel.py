@@ -41,7 +41,7 @@ def pars():
                 soup = BeautifulSoup(page_html,'lxml') #ПАРСИМ
                 list_level = soup.find("select",{'name':'level'}).find_all("option")[1:]
                 count_level = len(list_level) # забираем кол level, чтобы идти по index
-                select_level = Select(driver.find_element(By.NAME,"level"))# нАХОДИМ КНОПКУ LEVEL
+                select_level = Select(driver.find_element(By.NAME,"level")) # нАХОДИМ КНОПКУ LEVEL
                 print(f"Факультет - {index_fakult}:".strip())
                 for index_level in range(1,count_level+1): # идем по index элементов
                     sleep(2)
@@ -76,17 +76,7 @@ def pars():
                             for groups in range(1,count_groups+1):
                                 sleep(1)
                                 select_group.select_by_index(groups)
-                                id_group+=1# чтобы связать id группы с уроками, мы же идем с первой группы и до конца, следовательно и с парами идем также
-                                sleep(5)
-                                button = driver.find_element(By.XPATH,"//button[@class='btn btn-primary btn__ajax__search animate']")
-                                button.click()
-                                sleep(3)
-                                driver.save_screenshot("1.png")
-                                with open("3.html","w",encoding="utf-8") as file:
-                                    file.write(driver.page_source)
-                                    print('hell')
-                                    driver.save_screenshot("скриншот.png")
-                                    return 0
+                                # вот здесь можно переписать на заполнение групп
 
 
 
@@ -95,6 +85,9 @@ def pars():
     finally:
         driver.close()
         driver.quit()
+
+def block():
+    pass # мржно написать замену блока
 def main():
     pars()
 

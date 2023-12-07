@@ -4,6 +4,7 @@ requests
 beautifulsoup4
 lxml
 """
+from test_pars_page import pars_PageLessons
 from bs4 import BeautifulSoup
 from selenium import webdriver
 # from selenium.webdriver.firefox.service import Service
@@ -80,12 +81,9 @@ def pars():
                                 button = driver.find_element(By.XPATH,"//button[@class='btn btn-primary btn__ajax__search animate']")
                                 button.click()
                                 sleep(3)
-                                driver.save_screenshot("1.png")
-                                with open("3.html","w",encoding="utf-8") as file:
-                                    file.write(driver.page_source)
-                                    print('hell')
-                                    driver.save_screenshot("скриншот.png")
-                                    return 0
+                                pars_PageLessons(driver.page_source,id_group)
+                                sleep(1)
+
 
 
 
