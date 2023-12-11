@@ -3,6 +3,7 @@ import sqlite3 as sq
 from time import sleep
 def db_complect():
     time_count = 1
+    error_list = []
     with open("lesson.txt","r",encoding="utf-8") as file:
         with sq.connect("rudn.db") as con:
             cur = con.cursor()
@@ -13,6 +14,7 @@ def db_complect():
                 if not line:
                     break
                 line = str_trans(line)
+                print(line)
                 cur.execute(f"""
                     SELECT id_row FROM time_lessons WHERE Name =="{line[0]}"
                     """)
@@ -28,19 +30,26 @@ def db_complect():
                 cur.execute(f"""
                 SELECT id_row FROM groups WHERE Name =="{line[7]}"
                 """)
-                id_group_result = cur.fetchall()[0][0]
-
+                id_group_result = cur.fetchall()
+                if len(id_group_result) == 0:
+                    time_count = time_count + 1
+                    error_list.append(time_count)
+                    continue
                 cur.execute(f"""
                 INSERT INTO lessons(Name_lesson,id_time_numbers,Office,id_day_week,id_week,id_type,teacher,group_name,id_group)
-                VALUES("{name_lesson}",{id_time},"{office}",{id_day_week},{id_week},{id_type},"{teacher}","{name_group}",{id_group_result})""")
+                VALUES('{name_lesson}',{id_time},'{office}',{id_day_week},{id_week},{id_type},'{teacher}',"{name_group}",{id_group_result[0][0]})""")
                 print(f"{time_count}/28367")
+
                 time_count += 1
-                sleep(1)
+    for i in error_list:
+        print(i)
+
 #крч ошибка в 1855 строке, надо поставить принт списка
 #id_group_result = cur.fetchall()[0][0]
 #IndexError: list index out of range
-#['16:30-17:50', 'Цитология', 'гистология и эмбриология', 'Лекция', 'Рысцова Екатерина Олеговна', 'АТИ-зал№1', 'Четверг', 'нижняя', 'СВЭбз-01-22', '13']
-#['09:00-10:20', 'Цитология', 'гистология и эмбриология', 'Лабораторная работа', 'Рысцова Екатерина Олеговна', 'АТИ-343', 'Понедельник', 'верхняя', 'СВЭбд-01-22', '17']
+#['13:30 - 14:50', 'Цитология, гистология и эмбриология', 'Лабораторная работа', 'Понедельник', 'нижняя', 'СВТсд-04-21', 83]
+#['12:00 - 13:20', 'Цитология', 'гистология и эмбриология', 'Лабораторная работа', 'Понедельник', 'нижняя', 'СВТсд-04-21', '83']
+#['13:30 - 14:50', 'Цитология', 'гистология и эмбриология', 'Лабораторная работа', 'Понедельник', 'верхняя', 'СВТсд-04-21', '83']
 def type_trasformation(str_type):
     if str_type == "Лекция":
         return 1
@@ -48,6 +57,8 @@ def type_trasformation(str_type):
         return 2
     elif str_type == "Лабораторная работа":
         return 3
+    elif str_type == "Семинар":
+        return 4
 
 def day_trasformation(str_day,db_list_day):
     for i in range(0,len(db_list_day)):
@@ -66,6 +77,21 @@ def str_trans(s):
     s = s.replace("'",'')
     s = s.split(",")
     s = [i.strip() for i in s]
+    print(s)
+    if len(s) == 10:
+        s[1] = s[1] + s[2]
+        s.remove(s[2])
+    if len(s) == 8:
+        s[1] = s[1] + s[2]
+        s.remove(s[2])
+    if len(s) == 11:
+        s[1] = s[1] + s[2] + s[3]
+        s.remove(s[3])
+        s.remove(s[2])
+    if s[1] == "Histology":
+        s[1] = s[1] + s[2] + s[3]
+        s.remove(s[3])
+        s.remove(s[2])
     if len(s) < 9:
         count = 0
         for i in range(0,9):
@@ -77,10 +103,15 @@ def str_trans(s):
     else:
         a = s
     a[0] = a[0].replace(" ",'')
-    if len(a) == 10:
-        a[1] = a[1] + a[2]
-        a.remove(a[2])
+    # if len(a) == 10:
+    #     a[1] = a[1] + a[2]
+    #     a.remove(a[2])
     return a
+#['16:30 - 17:50', 'Акушерство', 'гинекология и андрология', 'Лабораторная работа', 'Понедельник', 'верхняя', 'СВТсв-01-20', '92']
+#['16:30-17:50', 'Акушерство', 'гинекология и андрология', 'NULL', 'NULL', 'Лабораторная работа', 'Понедельник', 'верхняя', 'СВТсв-01-20']
+#['10:30 - 11:50', 'Organization of Special Care for Patients', 'Лабораторная работа', 'Среда', 'нижняя', 'МЛДсд-56-22', '755'] 7
+#['19:30 - 20:50', 'Histology', 'Embryology', 'Cytology - Oral Histology', 'Лекция', 'Среда', 'верхняя', 'МСЯсд-51-22', '776'] 9
+
 def main():
     db_complect()
 
