@@ -31,6 +31,14 @@ def insert_into_client_db(telegram_id_value, schedule_name, schedule: list):
     WHERE telegram_id == '{telegram_id_value}'""", connector_client_schedule_db)]) >= MAX_SCHEDULES_COUNT:
         return f"У вас уже создано максимальное количество расписаний ({MAX_SCHEDULES_COUNT})."
 
+    if len([i for i in cur_exe_return(f"""SELECT telegram_id FROM Schedules 
+        WHERE telegram_id == '{telegram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
+                                      connector_client_schedule_db)]) > 0:
+        return "У вас уже существует расписание с таким названием."
+
+    if schedule_name[0] == '/':
+        return "Название расписания не может начинаться с символа '/'."
+
     cur_exe(f"""INSERT INTO Schedules (telegram_id, cl_schedule_name, cl_institute, cl_preparation_level, cl_course, cl_education_form, cl_group)
      VALUES ('{telegram_id_value}', '{schedule_name}', '{schedule[0]}', '{schedule[1]}', '{schedule[2]}', '{schedule[3]}', '{schedule[4]}')""",
             connector_client_schedule_db)
@@ -49,10 +57,10 @@ def get_client_schedule(telegram_id_value):
             client_schedule_dict[key] = value
         return client_schedule_dict
     return None
+    # Здесь, вместо сохраненных данных запроса должно передаваться полученное из rudn.db расписание
 
 
 def delete_client_schedule(telegram_id_value, schedule_name):
     cur_exe(f"""DELETE FROM Schedules
     WHERE telegram_id == '{telegram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
             connector_client_schedule_db)
-

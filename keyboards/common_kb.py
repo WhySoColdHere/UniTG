@@ -9,9 +9,6 @@ from aiogram import types
 #         kb.add(types.KeyboardButton(value_tuple[0]))
 #     return kb
 
-
-# В group_keyboard_dict_reply поступает 2 аргумента: словарь и флаг. Если флаг == key, то кнопки будут создаваться по ключу словаря.
-# Если флаг == vaLue...
 def group_keyboard_dict_reply(values_dict: dict):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for key in values_dict:
@@ -19,12 +16,11 @@ def group_keyboard_dict_reply(values_dict: dict):
     return kb
 
 
-# def group_keyboard_tuple_reply(tuples_list: list):
-#     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-#     for tuple_value in tuples_list:
-#         for value in tuple_value:
-#             kb.add(types.KeyboardButton(value))
-#     return kb
+def group_keyboard_list_reply(names_list: list):
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for value in names_list:
+        kb.add(types.KeyboardButton(value))
+    return kb
 
 # Не уверен, будем ли мы использовать inline кнопки
 # def group_keyboard_common_inline(values_list: dict):
