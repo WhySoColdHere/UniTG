@@ -1,3 +1,5 @@
+import sqlite3
+
 from aiogram import types
 from keyboards import common_kb, common_keyboard_names
 from create_bot import bot, dp
@@ -5,10 +7,14 @@ from aiogram.dispatcher import FSMContext
 from states.schedule_states import ScheduleStatesStudents
 from states.get_online_states import OnlineStates
 from states.client_schedule_states import ClientScheduleStates
-# from databases.schedule_database_dir.rudn_database import select_notes, get_appropriate_keyboard
+from databases.schedule_database_dir.rudn_database import get_institutes_names, get_courses_names, \
+    get_education_forms_names, get_groups_names
+# from databases.schedule_database_dir.rudn_database import get_appropriate_keyboard
 from databases.online_database_dir.online_database import insert_into_online_db, get_online, DAYS_TO_STORE
 from databases.client_schedule_database_dir.client_schedule_database import insert_into_client_db, get_client_schedule, \
     delete_client_schedule
+
+DATA_DICT = dict()
 
 
 @dp.message_handler(commands=['start'])
@@ -34,7 +40,7 @@ async def get_id_h(message: types.Message):
 @dp.message_handler(commands=['break'], state='*')
 async def get_online_command_h(message: types.Message, state: FSMContext):
     await state.finish()
-    await bot.send_message(message.chat.id, "Введите желаемую команду.", reply_markup=types.ReplyKeyboardRemove())
+    await bot.send_message(message.chat.id, "Введите желаемую команду.")
 
 
 @dp.message_handler(commands=['get_online'], state='*')
@@ -67,9 +73,9 @@ async def preparation_level_st_h(message: types.Message, state: FSMContext):
     async with state.proxy() as proxy_data:
         proxy_data['schedule_data'] = schedule_data
 
-    await bot.send_message(message.chat.id, 'Выбери уровень подготовки.')
-    # await bot.send_message(message.chat.id, 'Выбери уровень подготовки.',
-    #                        reply_markup=common_keyboard_names.levels_of_preparation())
+    await bot.send_message(message.chat.id, 'Выбери уровень подготовки.',
+                           reply_markup=common_kb.group_keyboard_list_reply(
+                               common_keyboard_names.levels_of_preparation()))
     await state.set_state(ScheduleStatesStudents.waiting_for_level_of_preparation.state)
 
 
@@ -79,9 +85,11 @@ async def institute_st_h(message: types.Message, state: FSMContext):
         schedule_data = proxy_data['schedule_data']
         schedule_data.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите институт.')
-    # await bot.send_message(message.chat.id, 'Выберите институт.',
-    #                        reply_markup=common_kb.group_keyboard_list_reply(get_appropriate_keyboard(message.text, 0)))
+    institute_rudn_data = get_institutes_names(message.text)
+    DATA_DICT["preparation_node_id"] = institute_rudn_data["preparation_node_id"]
+
+    await bot.send_message(message.chat.id, 'Выберите институт.',
+                           reply_markup=common_kb.group_keyboard_list_reply(institute_rudn_data["names"]))
 
     await state.set_state(ScheduleStatesStudents.waiting_for_institute.state)
 
@@ -92,9 +100,12 @@ async def course_st_h(message: types.Message, state: FSMContext):
         schedule_data = proxy_data['schedule_data']
         schedule_data.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите курс.')
-    # await bot.send_message(message.chat.id, 'Выберите курс.',
-    #                        reply_markup=common_kb.group_keyboard_list_reply(get_appropriate_keyboard(message.text, 1)))
+    course_rudn_data = get_courses_names(message.text, DATA_DICT)
+    DATA_DICT["institute_node_id"] = course_rudn_data["institute_node_id"]
+
+    # await bot.send_message(message.chat.id, 'Выберите курс.')
+    await bot.send_message(message.chat.id, 'Выберите курс.',
+                           reply_markup=common_kb.group_keyboard_list_reply(course_rudn_data["names"]))
     await state.set_state(ScheduleStatesStudents.waiting_for_course.state)
 
 
@@ -104,9 +115,12 @@ async def education_form_st_h(message: types.Message, state: FSMContext):
         schedule_data = proxy_data['schedule_data']
         schedule_data.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите форму обучения.')
-    # await bot.send_message(message.chat.id, 'Выберите форму обучения.',
-    #                        reply_markup=common_kb.group_keyboard_list_reply(get_appropriate_keyboard(message.text, 2)))
+    education_form_rudn_data = get_education_forms_names(message.text, DATA_DICT)
+    DATA_DICT["course_node_id"] = education_form_rudn_data["course_node_id"]
+
+    # await bot.send_message(message.chat.id, 'Выберите форму обучения.')
+    await bot.send_message(message.chat.id, 'Выберите форму обучения.',
+                           reply_markup=common_kb.group_keyboard_list_reply(education_form_rudn_data["names"]))
     await state.set_state(ScheduleStatesStudents.waiting_for_educational_form.state)
 
 
@@ -116,9 +130,11 @@ async def group_st_h(message: types.Message, state: FSMContext):
         schedule_data = proxy_data['schedule_data']
         schedule_data.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Выберите группу.')
-    # await bot.send_message(message.chat.id, 'Выберите группу.',
-    #                        reply_markup=common_kb.group_keyboard_list_reply(get_appropriate_keyboard(message.text, 3)))
+    group_rudn_data = get_groups_names(message.text, DATA_DICT)
+    DATA_DICT["education_form_node_id"] = group_rudn_data["education_form_node_id"]
+
+    await bot.send_message(message.chat.id, 'Выберите группу.',
+                           reply_markup=common_kb.group_keyboard_list_reply(group_rudn_data["names"]))
     await state.set_state(ScheduleStatesStudents.waiting_for_group.state)
 
 
@@ -128,9 +144,9 @@ async def schedule_name_st_h(message: types.Message, state: FSMContext):
         schedule_data = proxy_data['schedule_data']
         schedule_data.append(message.text)
 
-    await bot.send_message(message.chat.id, 'Введите имя своего расписания.')
-    # await bot.send_message(message.chat.id, 'Введите имя своего расписания.',
-    #                        reply_markup=common_kb.group_keyboard_list_reply(get_appropriate_keyboard(message.text, 4)))
+    DATA_DICT["group_name"] = message.text
+
+    await bot.send_message(message.chat.id, 'Придумайте название своему расписанию.')
     await state.set_state(ScheduleStatesStudents.waiting_for_schedule_name.state)
 
 
@@ -142,7 +158,7 @@ async def adding_data_st_h(message: types.Message, state: FSMContext):
     await bot.send_message(message.chat.id, insert_into_client_db(message.chat.id, message.text, schedule_data),
                            reply_markup=types.ReplyKeyboardRemove())
 
-    #select_notes(schedule_data)
+    # select_notes(schedule_data)
     await state.finish()
 
 
