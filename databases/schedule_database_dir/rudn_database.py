@@ -1,19 +1,7 @@
 import sqlite3
-from databases.general_methods import cur_exe, cur_exe_return
+from databases.general_methods import cur_exe_return
 
 connector_rudn_db = sqlite3.connect(r"databases/schedule_database_dir/rudn.db")
-
-
-# data = ["Бакалавриат", "АТИ", "1", "Очная", "САГбд-01-23"]
-# data_id_dict = dict()
-# tables = ["Preparation", "Faculties", "Course", "form_study", "groups"]
-# for key, current_table in zip(data, tables):
-#     data_id_dict[key] = list(
-#         cur_exe_return(f"""SELECT id_row FROM '{current_table}' WHERE Name = '{key}'""", connector_rudn_db))
-#
-# print(data_id_dict)
-
-# print(list(cur_exe_return("""SELECT * FROM Preparation""", connector_rudn_db)))
 
 
 def connect_schedule_database():
@@ -21,19 +9,6 @@ def connect_schedule_database():
         print("Schedule database is connected")
     else:
         raise ConnectionError("Schedule database is not connected")
-
-
-# def select_notes(data: list):
-#    tables = ["Preparation", "Faculties", "Course", "form_study", "groups"]
-#     data_id_dict = dict()
-#
-#     for key, current_table in zip(data, tables):
-#         data_id_dict[key] = \
-#             list(cur_exe_return(f"""
-#             SELECT id_row FROM '{current_table}' WHERE Name = '{key}'""", connector_rudn_db))[0][0]
-#
-#     print(data)
-#     print(data_id_dict)
 
 
 # Большой-большой костыль.
@@ -124,21 +99,70 @@ def get_groups_names(name, nodes: dict):
     return {"names": names, "education_form_node_id": node_id}
 
 
-# def get_appropriate_keyboard(name: str, table_index: int):
-#     node_id = int(list(
-#         cur_exe_return(f"""
-#             SELECT id_row FROM '{TABLES[table_index]}' WHERE Name = '{name}'""", connector_rudn_db))[0][0])
-#
-#     print(node_id)
-# return list(
-#         *cur_exe_return(f"""
-#         SELECT Name FROM '{TABLES[table_index + 1]}' WHERE id_row = {node_id}""", connector_rudn_db))
-# return list(
-#         *cur_exe_return(f"""
-#         SELECT Name FROM '{TABLES[-1]}' WHERE id_row = {node_id}""", connector_rudn_db))
+def get_week_objects():
+    pass
 
-# id_form_study == {node_id} --> 1220
-# id_form_study == {node_id} AND id_curse == {nodes["course_node_id"]} --> 398
-# id_form_study == {node_id} AND id_curse == {nodes["course_node_id"]} AND fakult_id == {nodes["institute_node_id"]} --> 40
-# id_form_study == {node_id} AND id_curse == {nodes["course_node_id"]} AND fakult_id == {nodes["institute_node_id"]}
-#             AND id_preparation == {nodes["preparation_node_id"]} --> 22
+
+def get_client_schedule_from_rudn(schedule, day_of_week):
+    day_of_week_id = int(list(
+        cur_exe_return(f"""SELECT id_row FROM days_of_the_week WHERE Name == '{day_of_week}'""", connector_rudn_db))[0][
+                             0])
+
+    upper_week_id = 2
+    lower_week_id = 1
+
+    lessons_all_weeks_cur_day = list(cur_exe_return(f"""SELECT * FROM lessons
+                                WHERE group_name == '{schedule['group_name']}'
+                                AND id_day_week == {day_of_week_id}""",
+                                                    connector_rudn_db))
+
+    lessons_upper_week_cur_day = [i[1:] for i in lessons_all_weeks_cur_day if i[5] == upper_week_id]
+    lessons_lower_week_cur_day = [i[1:] for i in lessons_all_weeks_cur_day if i[5] == lower_week_id]
+
+    lower_week_object = dict()
+    lower_week_objects_list = list()
+    lower_week_messages = str()
+    for i in range(0, len(lessons_lower_week_cur_day)):
+        lower_week_object['name'] = lessons_lower_week_cur_day[i][0]
+        my_time = list(cur_exe_return(f"""SELECT Name, account_number FROM time_lessons
+                                                        WHERE id_row == {lessons_lower_week_cur_day[i][1]}""",
+                                      connector_rudn_db))[0]
+        lower_week_object['time'] = my_time[0]
+        lower_week_object['lesson_number'] = my_time[1]
+        lower_week_object['office'] = lessons_lower_week_cur_day[i][2] if lessons_lower_week_cur_day[i][
+                                                                              2] != 'NULL' else 'Сам(a) думай'
+        lower_week_object['week_type'] = list(cur_exe_return(f"""SELECT numbers FROM week_numbers 
+                                                            WHERE row_id == {lower_week_id}""", connector_rudn_db))[0][
+            0]
+        lower_week_object['lesson_type'] = list(cur_exe_return(f"""SELECT Name FROM type_lessons
+                                                              WHERE id_row == {lessons_lower_week_cur_day[i][5]}""",
+                                                               connector_rudn_db))[0][0]
+        lower_week_object['teacher'] = lessons_lower_week_cur_day[i][6]
+        lower_week_objects_list.append(lower_week_object)
+
+    upper_week_object = dict()
+    upper_week_objects_list = list()
+    upper_week_messages = str()
+    for i in range(0, len(lessons_upper_week_cur_day)):
+        upper_week_object['name'] = lessons_upper_week_cur_day[i][0]
+        my_time = list(cur_exe_return(f"""SELECT Name, account_number FROM time_lessons
+                                                        WHERE id_row == {lessons_upper_week_cur_day[i][1]}""",
+                                      connector_rudn_db))[0]
+        upper_week_object['time'] = my_time[0]
+        upper_week_object['lesson_number'] = my_time[1]
+        upper_week_object['office'] = lessons_upper_week_cur_day[i][2] if lessons_upper_week_cur_day[i][
+                                                                              2] != 'NULL' else 'Сам(a) думай'
+        upper_week_object['week_type'] = list(cur_exe_return(f"""SELECT numbers FROM week_numbers 
+                                                            WHERE row_id == {upper_week_id}""", connector_rudn_db))[0][
+            0]
+        upper_week_object['lesson_type'] = list(cur_exe_return(f"""SELECT Name FROM type_lessons
+                                                              WHERE id_row == {lessons_upper_week_cur_day[i][5]}""",
+                                                               connector_rudn_db))[0][0]
+        upper_week_object['teacher'] = lessons_upper_week_cur_day[i][6]
+
+        upper_week_objects_list.append(upper_week_object)
+
+    from pprint import pprint
+    pprint(upper_week_objects_list)
+    pprint(lower_week_objects_list)
+    return schedule

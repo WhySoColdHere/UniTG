@@ -2,7 +2,9 @@ import sqlite3
 from databases.general_methods import cur_exe, cur_exe_return
 
 connector_client_schedule_db = sqlite3.connect(r"databases/client_schedule_database_dir/ClientSchedule.db")
+
 MAX_SCHEDULES_COUNT = 3
+DAYS_OF_WEEK = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
 
 
 # connector_online_db = sqlite3.connect(r"ClientSchedule.db")
@@ -45,7 +47,8 @@ def insert_into_client_db(telegram_id_value, schedule_name, schedule: list):
     return "Расписание успешно создано."
 
 
-def get_client_schedule(telegram_id_value):
+def get_client_schedule_names(telegram_id_value):
+    # Именно благодаря get_client_schedule_names(...) нам выводятся название расписаний пользователя, ее трогать нельзя!
     client_schedule = [i for i in
                        cur_exe_return(f"""SELECT * FROM Schedules WHERE telegram_id == '{telegram_id_value}'""",
                                       connector_client_schedule_db)]
@@ -57,7 +60,18 @@ def get_client_schedule(telegram_id_value):
             client_schedule_dict[key] = value
         return client_schedule_dict
     return None
-    # Здесь, вместо сохраненных данных запроса должно передаваться полученное из rudn.db расписание
+
+
+def get_client_schedule_week_days(schedule):
+    # Эта функция будет выводить непосредственно расписание группы на чет. и нечет. недели.
+    keys = ["telegram_id", "schedule_name", "preparation_id", "institute_id", "course_id",
+            "education_form_id", "group_name"]
+    main_schedule = dict()
+
+    for key, value in zip(keys, schedule):
+        main_schedule[key] = value
+
+    return {"schedule": main_schedule}
 
 
 def delete_client_schedule(telegram_id_value, schedule_name):
