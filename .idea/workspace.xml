@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2c704f97-7b68-482e-85e4-a2ec75f32419" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/states/start_command_states.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/databases/client_schedule_database_dir/ClientSchedule.db" beforeDir="false" afterPath="$PROJECT_DIR$/databases/client_schedule_database_dir/ClientSchedule.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/databases/client_schedule_database_dir/client_schedule_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/client_schedule_database_dir/client_schedule_database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/databases/schedule_database_dir/rudn_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/schedule_database_dir/rudn_database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/user_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/user_handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keyboards/common_kb.py" beforeDir="false" afterPath="$PROJECT_DIR$/keyboards/common_kb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/states/client_schedule_states.py" beforeDir="false" afterPath="$PROJECT_DIR$/states/client_schedule_states.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +39,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/lavrf/Desktop/all/ProgrammProj/PyCharmProj/SQLProj/SQLite_f&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lavrf/Desktop/all/ProgrammProj/PyCharmProj/FunAndLearn&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;DatabaseDriversLRU&quot;: [
@@ -114,7 +112,14 @@
       <workItem from="1703192113847" duration="3313000" />
       <workItem from="1703249629622" duration="12239000" />
       <workItem from="1703340194477" duration="14354000" />
-      <workItem from="1703507541835" duration="9760000" />
+      <workItem from="1703507541835" duration="10386000" />
+      <workItem from="1703523871019" duration="2596000" />
+      <workItem from="1703540133413" duration="3779000" />
+      <workItem from="1703622806859" duration="4520000" />
+      <workItem from="1703757817920" duration="5830000" />
+      <workItem from="1703852799437" duration="389000" />
+      <workItem from="1703866717916" duration="327000" />
+      <workItem from="1704218861091" duration="143000" />
     </task>
     <servers />
   </component>
@@ -141,6 +146,6 @@
     <SUITE FILE_PATH="coverage/UniTG$online_database.coverage" NAME="online_database Coverage Results" MODIFIED="1701784788390" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/databases/online_database_dir" />
     <SUITE FILE_PATH="coverage/UniTG$client_schedule_database.coverage" NAME="client_schedule_database Coverage Results" MODIFIED="1701967899569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/databases/client_schedule_database_dir" />
     <SUITE FILE_PATH="coverage/UniTG$common_kb.coverage" NAME="common_kb Coverage Results" MODIFIED="1699366496887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/keyboards" />
-    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1703517828950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/UniTG$bot_telegram.coverage" NAME="bot_telegram Coverage Results" MODIFIED="1703866963709" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
