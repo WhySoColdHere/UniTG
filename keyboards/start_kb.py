@@ -9,8 +9,9 @@ def group_keyboard_list_reply(names_list: list):
         types.KeyboardButton(text="Завтра")
     ])
 
-    for schedule_name in names_list:
-        kb.append([schedule_name])
+    if names_list is not None:
+        for schedule_name in names_list:
+            kb.append([schedule_name])
 
     kb.append([
         types.KeyboardButton(text="Справка"),

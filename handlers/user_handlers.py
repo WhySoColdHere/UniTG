@@ -38,6 +38,9 @@ async def start_command_s(message: types.Message, state: FSMContext):
         start_schedules_list = proxy_data['start_schedules_list']
     default_buttons_names = ["Сегодня", "Завтра", "Справка", "Профиль"]
 
+    if start_schedules_list is None:
+        start_schedules_list = list()
+
     if (message.text not in start_schedules_list) and (message.text not in default_buttons_names):
         await bot.send_message(message.chat.id,
                                "Вы ввели некорректное в данном контексте сообщение, вызовите команду заново.")
@@ -46,17 +49,82 @@ async def start_command_s(message: types.Message, state: FSMContext):
 
     if message.text == default_buttons_names[0]:
         pass
+        await state.finish()
+
     elif message.text == default_buttons_names[1]:
         pass
-    elif message == default_buttons_names[-2]:
-        pass
+        await state.finish()
+
+    elif message.text == default_buttons_names[-2]:
+        await bot.send_message(message.chat.id, "Здесь будет справка(?)")
+        await state.finish()
+
     elif message.text == default_buttons_names[-1]:
         await profile_command(message)
+        await state.finish()
+
     else:
-        # await state.set_state(ClientScheduleStates.waiting_for_schedule_to_show.state)
-        # await show_client_schedule_wait_for_schedule_h(message=message, state=state)
-        pass
-    await state.finish()
+        await state.set_state(ClientScheduleStates.waiting_for_schedule_to_show.state)
+        await show_client_schedule_wait_for_schedule_h(message=message, state=state)
+
+
+@dp.message_handler(state=ClientScheduleStates.waiting_for_schedule_to_show)
+async def show_client_schedule_wait_for_schedule_h(message: types.Message, state: FSMContext):
+    keyboard = show_schedule_kb.show_schedule_inline_week_days_kb(DAYS_OF_WEEK)
+
+    async with state.proxy() as proxy_data:
+        schedule = get_client_schedule_names(message.chat.id)  # {name: schedule, name: schedule...}
+        main_schedule = get_client_schedule_dict(schedule[message.text])  # Добавляет ключи
+        proxy_data['schedule'] = main_schedule['schedule']  # {'telegram_id': '1947491258', 'schedule_name': 'jhslj', }
+        proxy_data['keyboard'] = keyboard
+
+    await bot.send_message(message.chat.id,
+                           f"Выберите день недели.\nРасписание группы {main_schedule['schedule']['group_name']}.",
+                           reply_markup=keyboard)
+    await state.set_state(ClientScheduleStates.waiting_for_day_of_week.state)
+
+
+@dp.callback_query_handler(Text(startswith="upper_week"), state=ClientScheduleStates.waiting_for_day_of_week)
+async def show_schedule_upper_week_callback_handler(callback: types.CallbackQuery, state: FSMContext):
+    callback_data = callback.data[10:]
+    async with state.proxy() as proxy_data:
+        schedule = proxy_data['schedule']
+        keyboard = proxy_data['keyboard']
+
+    schedule = get_client_schedule_from_rudn(schedule, callback_data)['upper_week']
+
+    await callback.message.edit_text(text=week_schedule(schedule, "Верхняя неделя"))
+    await callback.message.edit_reply_markup(reply_markup=keyboard)
+
+
+@dp.callback_query_handler(Text(startswith="lower_week"), state=ClientScheduleStates.waiting_for_day_of_week)
+async def show_schedule_lover_week_callback_handler(callback: types.CallbackQuery, state: FSMContext):
+    callback_data = callback.data[10:]
+    async with state.proxy() as proxy_data:
+        schedule = proxy_data['schedule']
+        keyboard = proxy_data['keyboard']
+
+    schedule = get_client_schedule_from_rudn(schedule, callback_data)['lower_week']
+
+    await callback.message.edit_text(text=week_schedule(schedule, "Нижняя неделя"))
+    await callback.message.edit_reply_markup(reply_markup=keyboard)
+
+
+def week_schedule(schedule, week_pos):
+    week_schedule_str = week_pos
+    if is_schedule_empty(schedule):
+        week_schedule_str += "Пар нет, урааа!"
+    else:
+        for lesson in schedule:
+            week_schedule_str += f"\n\n{lesson['lesson_number']} пара({lesson['time']})\n{lesson['name']}({lesson['lesson_type']})" \
+                                 f"\n{lesson['teacher']}\n{lesson['office']}\n\n\n"
+    return week_schedule_str
+
+
+def is_schedule_empty(schedule: list):
+    if len(schedule) > 0:
+        return False
+    return True
 
 
 @dp.message_handler(commands=['profile'])
@@ -230,85 +298,6 @@ async def kinda_validator(message, state, elems, err_message):
         await state.finish()
         return True
     return False
-
-
-@dp.message_handler(commands=['show_my_schedule'], state='*')
-async def show_client_schedule_h(message: types.Message, state: FSMContext):
-    try:
-        insert_into_online_db(message.chat.id)
-        schedule = get_client_schedule_names(message.chat.id)
-
-        if schedule is None:
-            await bot.send_message(message.chat.id, "У вас нет ни одного расписания.")
-            return
-
-        async with state.proxy() as proxy_data:
-            proxy_data['schedule'] = schedule
-
-        await bot.send_message(message.chat.id, 'Выберите расписание.',
-                               reply_markup=common_kb.group_keyboard_dict_reply(schedule))
-        await state.set_state(ClientScheduleStates.waiting_for_schedule_to_show.state)
-    except Exception:
-        await bot.send_message("Чет пошло не так, пробуй еще раз.")
-        await state.finish()
-
-
-@dp.message_handler(state=ClientScheduleStates.waiting_for_schedule_to_show)
-async def show_client_schedule_wait_for_schedule_h(message: types.Message, state: FSMContext):
-    keyboard = show_schedule_kb.show_schedule_inline_week_days_kb(DAYS_OF_WEEK)
-    async with state.proxy() as proxy_data:
-        schedule = proxy_data['schedule']
-        main_schedule = get_client_schedule_dict(schedule[message.text])
-        proxy_data['schedule'] = main_schedule['schedule']
-        proxy_data['keyboard'] = keyboard
-
-    await bot.send_message(message.chat.id,
-                           f"Выберите день недели.\nРасписание группы {main_schedule['schedule']['group_name']}.",
-                           reply_markup=keyboard)
-    await state.set_state(ClientScheduleStates.waiting_for_day_of_week.state)
-
-
-@dp.callback_query_handler(Text(startswith="upper_week"), state=ClientScheduleStates.waiting_for_day_of_week)
-async def show_schedule_upper_week_callback_handler(callback: types.CallbackQuery, state: FSMContext):
-    callback_data = callback.data[10:]
-    async with state.proxy() as proxy_data:
-        schedule = proxy_data['schedule']
-        keyboard = proxy_data['keyboard']
-
-    schedule = get_client_schedule_from_rudn(schedule, callback_data)['upper_week']
-
-    await callback.message.edit_text(text=week_schedule(schedule))
-    await callback.message.edit_reply_markup(reply_markup=keyboard)
-
-
-@dp.callback_query_handler(Text(startswith="lower_week"), state=ClientScheduleStates.waiting_for_day_of_week)
-async def show_schedule_lover_week_callback_handler(callback: types.CallbackQuery, state: FSMContext):
-    callback_data = callback.data[10:]
-    async with state.proxy() as proxy_data:
-        schedule = proxy_data['schedule']
-        keyboard = proxy_data['keyboard']
-
-    schedule = get_client_schedule_from_rudn(schedule, callback_data)['lower_week']
-
-    await callback.message.edit_text(text=week_schedule(schedule))
-    await callback.message.edit_reply_markup(reply_markup=keyboard)
-
-
-def week_schedule(schedule):
-    week_schedule_str = str()
-    if is_schedule_empty(schedule):
-        week_schedule_str += "Пар нет, урааа!"
-    else:
-        for lesson in schedule:
-            week_schedule_str += f"{lesson['lesson_number']} пара({lesson['time']})\n{lesson['name']}({lesson['lesson_type']})" \
-                                 f"\n{lesson['teacher']}\n{lesson['office']}\n\n\n"
-    return week_schedule_str
-
-
-def is_schedule_empty(schedule: list):
-    if len(schedule) > 0:
-        return False
-    return True
 
 
 @dp.message_handler(commands=['delete_my_schedule'], state='*')
