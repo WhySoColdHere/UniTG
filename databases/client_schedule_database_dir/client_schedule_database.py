@@ -21,7 +21,8 @@ def connect_client_schedule_database():
             cl_preparation_level TEXT NOT NULL,
             cl_course TEXT NOT NULL,
             cl_education_form TEXT NOT NULL,
-            cl_group TEXT NOT NULL
+            cl_group TEXT NOT NULL,
+            cl_is_default INTEGER
             )
             """, connector_client_schedule_db)
     else:
@@ -29,11 +30,11 @@ def connect_client_schedule_database():
 
 
 def insert_into_client_db(telegram_id_value, schedule_name, schedule: list):
-    if len([i for i in cur_exe_return(f"""SELECT telegram_id FROM Schedules 
+    if len([i for i in cur_exe_return(f"""SELECT telegram_id FROM Schedules
     WHERE telegram_id == '{telegram_id_value}'""", connector_client_schedule_db)]) >= MAX_SCHEDULES_COUNT:
         return f"У вас уже создано максимальное количество расписаний ({MAX_SCHEDULES_COUNT})."
 
-    if len([i for i in cur_exe_return(f"""SELECT telegram_id FROM Schedules 
+    if len([i for i in cur_exe_return(f"""SELECT telegram_id FROM Schedules
         WHERE telegram_id == '{telegram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
                                       connector_client_schedule_db)]) > 0:
         return "У вас уже существует расписание с таким названием."
@@ -41,8 +42,8 @@ def insert_into_client_db(telegram_id_value, schedule_name, schedule: list):
     if schedule_name[0] == '/':
         return "Название расписания не может начинаться с символа '/'."
 
-    cur_exe(f"""INSERT INTO Schedules (telegram_id, cl_schedule_name, cl_institute, cl_preparation_level, cl_course, cl_education_form, cl_group)
-     VALUES ('{telegram_id_value}', '{schedule_name}', '{schedule[0]}', '{schedule[1]}', '{schedule[2]}', '{schedule[3]}', '{schedule[4]}')""",
+    cur_exe(f"""INSERT INTO Schedules (telegram_id, cl_schedule_name, cl_institute, cl_preparation_level, cl_course, cl_education_form, cl_group, cl_is_default)
+     VALUES ('{telegram_id_value}', '{schedule_name}', '{schedule[0]}', '{schedule[1]}', '{schedule[2]}', '{schedule[3]}', '{schedule[4]}', 0)""",
             connector_client_schedule_db)
     return "Расписание успешно создано."
 
@@ -78,3 +79,28 @@ def delete_client_schedule(telegram_id_value, schedule_name):
     cur_exe(f"""DELETE FROM Schedules
     WHERE telegram_id == '{telegram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
             connector_client_schedule_db)
+
+
+def make_client_schedule_default(telgram_id_value, schedule_name):
+    try:
+        cur_exe(f"""UPDATE Schedules 
+                    SET cl_is_default = 0
+                    WHERE telegram_id == '{telgram_id_value}'""",
+                connector_client_schedule_db)
+        cur_exe(f"""UPDATE Schedules 
+                    SET cl_is_default = 1
+                    WHERE telegram_id == '{telgram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
+                connector_client_schedule_db)
+        return True
+    except Exception:
+        return False
+
+
+def get_default_client_schedule(telegram_id_value):
+    try:
+        default_schedule = list(cur_exe_return(f"""SELECT cl_schedule_name FROM Schedules
+        WHERE telegram_id == '{telegram_id_value}' AND cl_is_default == 1""",
+                                               connector_client_schedule_db))[0][0]
+        return default_schedule
+    except IndexError:
+        return None
