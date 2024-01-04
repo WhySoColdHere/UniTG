@@ -125,9 +125,12 @@ def get_week_objects(week_cur_day, week_id):
 
 
 def get_client_schedule_from_rudn(schedule, day_of_week):
+    day_of_week_raw_dict = {"Пн": "Понедельник", "Вт": "Вторник", "Ср": "Среда", "Чт": "Четверг", "Пт": "Пятница",
+                            "Сб": "Суббота"}
+
     day_of_week_id = int(list(
-        cur_exe_return(f"""SELECT id_row FROM days_of_the_week WHERE Name == '{day_of_week}'""", connector_rudn_db))[0][
-                             0])
+        cur_exe_return(f"""SELECT id_row FROM days_of_the_week WHERE Name == '{day_of_week_raw_dict[day_of_week]}'""",
+                       connector_rudn_db))[0][0])
 
     upper_week_id = 2
     lower_week_id = 1
@@ -140,13 +143,8 @@ def get_client_schedule_from_rudn(schedule, day_of_week):
     lessons_upper_week_cur_day = [i[1:] for i in lessons_all_weeks_cur_day if i[5] == upper_week_id]
     lessons_lower_week_cur_day = [i[1:] for i in lessons_all_weeks_cur_day if i[5] == lower_week_id]
 
-    from pprint import pprint
     upper_week_objects = get_week_objects(lessons_upper_week_cur_day, upper_week_id)
     lower_week_objects = get_week_objects(lessons_lower_week_cur_day, lower_week_id)
-
-    pprint(upper_week_objects)
-    print("\n\n")
-    pprint(lower_week_objects)
 
     schedule_dict = {'upper_week': upper_week_objects, 'lower_week': lower_week_objects}
 

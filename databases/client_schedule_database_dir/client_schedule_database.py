@@ -4,7 +4,7 @@ from databases.general_methods import cur_exe, cur_exe_return
 connector_client_schedule_db = sqlite3.connect(r"databases/client_schedule_database_dir/ClientSchedule.db")
 
 MAX_SCHEDULES_COUNT = 3
-DAYS_OF_WEEK = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
+DAYS_OF_WEEK = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
 
 
 # connector_online_db = sqlite3.connect(r"ClientSchedule.db")
@@ -63,7 +63,7 @@ def get_client_schedule_names(telegram_id_value):
     return None
 
 
-def get_client_schedule_week_days(schedule):
+def get_client_schedule_dict(schedule):
     # Эта функция будет выводить непосредственно расписание группы на чет. и нечет. недели.
     keys = ["telegram_id", "schedule_name", "preparation_id", "institute_id", "course_id",
             "education_form_id", "group_name"]
