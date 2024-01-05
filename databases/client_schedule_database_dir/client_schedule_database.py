@@ -81,15 +81,15 @@ def delete_client_schedule(telegram_id_value, schedule_name):
             connector_client_schedule_db)
 
 
-def make_client_schedule_default(telgram_id_value, schedule_name):
+def make_client_schedule_default(telegram_id_value, schedule_name):
     try:
         cur_exe(f"""UPDATE Schedules 
                     SET cl_is_default = 0
-                    WHERE telegram_id == '{telgram_id_value}'""",
+                    WHERE telegram_id == '{telegram_id_value}'""",
                 connector_client_schedule_db)
         cur_exe(f"""UPDATE Schedules 
                     SET cl_is_default = 1
-                    WHERE telegram_id == '{telgram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
+                    WHERE telegram_id == '{telegram_id_value}' AND cl_schedule_name == '{schedule_name}'""",
                 connector_client_schedule_db)
         return True
     except Exception:

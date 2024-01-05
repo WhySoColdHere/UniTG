@@ -1,9 +1,11 @@
+import datetime
+from random import choice
 from aiogram.dispatcher.filters import Text
 from aiogram import types
-from keyboards import common_kb, start_kb, profile_kb, show_schedule_kb
+from keyboards import common_kb, menu_kb, profile_kb, show_schedule_kb
 from create_bot import bot, dp
 from aiogram.dispatcher import FSMContext
-from states.start_command_states import StartCommandStates
+from states.menu_states import MenuCommandStates
 from states.schedule_states import ScheduleStatesStudents
 from states.get_online_states import OnlineStates
 from states.client_schedule_states import ClientScheduleStates
@@ -15,10 +17,27 @@ from databases.client_schedule_database_dir.client_schedule_database import inse
     get_default_client_schedule, make_client_schedule_default
 
 DATA_DICT = dict()
+COMPLIMENTS_LIST = [
+    "Ого, сегодня ты особенно сияешь..",
+    "Твоей фигуре равных нет :)",
+    "Алкоголь - хорошо, а знания - лучше!",
+    "Ты - подарок для окружающих ^_^",
+    "Ой-ой, кто-то выиграл порцию обнимашек прямо сейчас (>^.^)>",
+    "Ваша точка зрения, как глоток свежего воздуха (｡◕‿◕｡)",
+    "По шкале от 1 до 10, ты - 100 (ღ˘⌣˘ღ)",
+    "Пора насладиться моментом ~(˘▾˘~)",
+    "Жизнь была бы намного лучше, если бы больше людей были такими, как ты!",
+    r"Ты лучше, чем рожок мороженого, даже с посыпкой \ (•◡•) /"
+]
 
 
 @dp.message_handler(commands=['start'], state='*')
 async def start_command_h(message: types.Message, state: FSMContext):
+    await bot.send_message(message.chat.id, "Здравствуй, это бот с расписанием РУДН, выбери желаемое действие.")
+    await menu_command(message=message, state=state)
+
+
+async def menu_command(message: types.Message, state: FSMContext):
     insert_into_online_db(message.chat.id)
 
     start_schedules_list = get_client_schedule_names(message.chat.id)
@@ -27,39 +46,48 @@ async def start_command_h(message: types.Message, state: FSMContext):
         proxy_data['start_schedules_list'] = start_schedules_list
 
     await bot.send_message(message.chat.id,
-                           'Здравствуй, это бот с расписанием университета РУДН.\nВыбери желаемое действие',
-                           reply_markup=start_kb.group_keyboard_list_reply(start_schedules_list))
-    await state.set_state(StartCommandStates.waiting_for_button_click.state)
+                           choice(COMPLIMENTS_LIST),
+                           reply_markup=menu_kb.menu_keyboard_list_reply(start_schedules_list))
+    await state.set_state(MenuCommandStates.waiting_for_button_click.state)
 
 
-@dp.message_handler(state=StartCommandStates.waiting_for_button_click)
-async def start_command_s(message: types.Message, state: FSMContext):
+@dp.message_handler(state=MenuCommandStates.waiting_for_button_click)
+async def menu_command_s(message: types.Message, state: FSMContext):
     async with state.proxy() as proxy_data:
         start_schedules_list = proxy_data['start_schedules_list']
-    default_buttons_names = ["Сегодня", "Завтра", "Справка", "Профиль"]
+
+    default_buttons_names = ["Сегодня", "Завтра", "Создать расписание", "Удалить расписание", "Основное расписание",
+                             "Профиль"]
 
     if start_schedules_list is None:
         start_schedules_list = list()
 
     if (message.text not in start_schedules_list) and (message.text not in default_buttons_names):
         await bot.send_message(message.chat.id,
-                               "Вы ввели некорректное в данном контексте сообщение, вызовите команду заново.")
+                               "Вы ввели некорректное, в данном контексте, сообщение, вызовите команду заново.")
         await state.finish()
         return
 
     if message.text == default_buttons_names[0]:
-        pass
-        await state.finish()
+        week_number = datetime.date(datetime.date.today().year, datetime.date.today().month,
+                                    datetime.date.today().day).isocalendar().week
+        await bot.send_message(message.chat.id, schedule_for_specified_day(message.chat.id, week_number, 0))
 
     elif message.text == default_buttons_names[1]:
-        pass
-        await state.finish()
+        week_number = datetime.date(datetime.date.today().year, datetime.date.today().month,
+                                    datetime.date.today().day).isocalendar().week
+        await bot.send_message(message.chat.id, schedule_for_specified_day(message.chat.id, week_number, 1))
 
-    elif message.text == default_buttons_names[-2]:
-        await bot.send_message(message.chat.id, "Здесь будет справка(?)")
-        await state.finish()
+    elif message.text == default_buttons_names[2]:
+        await preparation_level_st_h(message=message, state=state)
 
-    elif message.text == default_buttons_names[-1]:
+    elif message.text == default_buttons_names[3]:
+        await delete_client_schedule_h(message=message, state=state)
+
+    elif message.text == default_buttons_names[4]:
+        await show_default_schedule_command(message=message, state=state)
+
+    elif message.text == default_buttons_names[5]:
         await profile_command(message)
         await state.finish()
 
@@ -68,14 +96,35 @@ async def start_command_s(message: types.Message, state: FSMContext):
         await show_client_schedule_wait_for_schedule_h(message=message, state=state)
 
 
+def schedule_for_specified_day(chat_id, week_number, days_forward):
+    try:
+        current_week_pos = "upper_week" if week_number % 2 != 0 else "lower_week"
+        default_schedule = get_default_client_schedule(chat_id)
+        custom_days_of_week = dict()
+        for num, day in enumerate(DAYS_OF_WEEK, start=1):
+            custom_days_of_week[num] = day
+
+        today = custom_days_of_week[datetime.datetime.today().weekday() + days_forward]
+        schedule_names = get_client_schedule_names(chat_id)
+        main_schedule = get_client_schedule_dict(schedule_names[default_schedule])['schedule']
+        pretty_schedule = get_client_schedule_from_rudn(main_schedule, today)[current_week_pos]
+        current_week_pos_rus = {"upper_week": "Верхняя неделя", "lower_week": "Нижняя неделя"}
+
+        return week_schedule(pretty_schedule, current_week_pos_rus[current_week_pos])
+    except TypeError:
+        return "У вас нет ни одного расписания."
+
+
 @dp.message_handler(state=ClientScheduleStates.waiting_for_schedule_to_show)
 async def show_client_schedule_wait_for_schedule_h(message: types.Message, state: FSMContext):
+    await bot.send_message(message.chat.id, choice(COMPLIMENTS_LIST),
+                           reply_markup=types.ReplyKeyboardRemove())
     keyboard = show_schedule_kb.show_schedule_inline_week_days_kb(DAYS_OF_WEEK)
 
     async with state.proxy() as proxy_data:
-        schedule = get_client_schedule_names(message.chat.id)  # {name: schedule, name: schedule...}
-        main_schedule = get_client_schedule_dict(schedule[message.text])  # Добавляет ключи
-        proxy_data['schedule'] = main_schedule['schedule']  # {'telegram_id': '1947491258', 'schedule_name': 'jhslj', }
+        schedule = get_client_schedule_names(message.chat.id)
+        main_schedule = get_client_schedule_dict(schedule[message.text])
+        proxy_data['schedule'] = main_schedule['schedule']
         proxy_data['keyboard'] = keyboard
 
     await bot.send_message(message.chat.id,
@@ -111,24 +160,30 @@ async def show_schedule_lover_week_callback_handler(callback: types.CallbackQuer
 
 
 def week_schedule(schedule, week_pos):
-    week_schedule_str = week_pos
-    if is_schedule_empty(schedule):
-        week_schedule_str += "Пар нет, урааа!"
+    week_schedule_str = f"{week_pos}"
+    if len(schedule) == 0:
+        week_schedule_str += f"\n\nПар нет, урааа!"
     else:
+        week_schedule_str += f"\nРасписание для группы '{schedule[0]['group_name']}'"
         for lesson in schedule:
             week_schedule_str += f"\n\n{lesson['lesson_number']} пара({lesson['time']})\n{lesson['name']}({lesson['lesson_type']})" \
-                                 f"\n{lesson['teacher']}\n{lesson['office']}\n\n\n"
+                                 f"\n{lesson['teacher']}\n{lesson['office']}"
+        week_schedule_str += f"\n\n\nРасписание на день недели '{schedule[0]['day']}'"
     return week_schedule_str
 
 
-def is_schedule_empty(schedule: list):
-    if len(schedule) > 0:
-        return False
-    return True
+@dp.message_handler(commands=['show_default_schedule'])
+async def show_default_schedule_command(message: types.Message, state: FSMContext):
+    def_schedule = get_default_client_schedule(message.chat.id)
+    reply = "У вас нет расписаний" if def_schedule is None else f"Ваше основное расписание: {def_schedule}"
+    await bot.send_message(message.chat.id, reply)
+    await menu_command(message=message, state=state)
 
 
 @dp.message_handler(commands=['profile'])
 async def profile_command(message: types.Message):
+    await bot.send_message(message.chat.id, choice(COMPLIMENTS_LIST),
+                           reply_markup=types.ReplyKeyboardRemove())
     insert_into_online_db(message.chat.id)
 
     schedule_names = get_client_schedule_names(message.chat.id)
@@ -152,7 +207,12 @@ async def profile_callback_query(callback: types.CallbackQuery, state: FSMContex
     is_default_bool = "Да" if get_default_client_schedule(callback.from_user.id) == callback_data else "Нет"
 
     await callback.message.edit_text(text=f"Расписание {callback_data}\nОсновное: {is_default_bool}")
-    await callback.message.edit_reply_markup(reply_markup=profile_kb.profile_actions_keyboard())
+
+    if callback_data == get_default_client_schedule(callback.from_user.id):
+        keyboard = profile_kb.profile_actions_keyboard(False)
+    else:
+        keyboard = profile_kb.profile_actions_keyboard(True)
+    await callback.message.edit_reply_markup(reply_markup=keyboard)
 
 
 @dp.callback_query_handler(text="profile_make_schedule_default")
@@ -170,9 +230,18 @@ async def profile_callback_query_del_sch(callback: types.CallbackQuery, state: F
     async with state.proxy() as proxy_data:
         profile_schedule_name = proxy_data['profile_schedule_name']
 
-    delete_client_schedule(callback.from_user.id, profile_schedule_name)
+    if profile_schedule_name == get_default_client_schedule(callback.from_user.id):
+        delete_client_schedule(callback.from_user.id, profile_schedule_name)
+        schedule_names = get_client_schedule_names(callback.from_user.id)
+        print(schedule_names)
+        if schedule_names is not None:
+            make_client_schedule_default(callback.from_user.id,
+                                         choice(list(schedule_names.keys())))
+    else:
+        delete_client_schedule(callback.from_user.id, profile_schedule_name)
     await bot.send_message(callback.from_user.id, "Расписание успешно удалено.",
                            reply_markup=types.ReplyKeyboardRemove())
+    await menu_command(message=callback.message, state=state)
 
 
 @dp.message_handler(commands=['help'])
@@ -212,7 +281,7 @@ async def get_online_FSM_h(message: types.Message, state: FSMContext):
             text = f"Мы храним информацию о пользователях не более чем {DAYS_TO_STORE} дней."
         await bot.send_message(message.chat.id, text)
     except ValueError:
-        await bot.send_message(message.chat.id, "Необходимо ввести число, а не эту фигню фигню выше.")
+        await bot.send_message(message.chat.id, "Необходимо ввести число, а не эту фигню выше.")
     finally:
         await state.finish()
 
@@ -230,6 +299,12 @@ async def preparation_level_st_h(message: types.Message, state: FSMContext):
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_level_of_preparation)
 async def institute_st_h(message: types.Message, state: FSMContext):
     institute_rudn_data = get_institutes_names(message.text)
+
+    if type(institute_rudn_data) == str:
+        await bot.send_message(message.chat.id, institute_rudn_data)
+        await state.finish()
+        return
+
     DATA_DICT["preparation_node_id"] = institute_rudn_data["preparation_node_id"]
 
     await bot.send_message(message.chat.id, 'Выберите институт.',
@@ -241,6 +316,12 @@ async def institute_st_h(message: types.Message, state: FSMContext):
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_institute)
 async def course_st_h(message: types.Message, state: FSMContext):
     course_rudn_data = get_courses_names(message.text, DATA_DICT)
+
+    if type(course_rudn_data) == str:
+        await bot.send_message(message.chat.id, course_rudn_data)
+        await state.finish()
+        return
+
     DATA_DICT["institute_node_id"] = course_rudn_data["institute_node_id"]
 
     await bot.send_message(message.chat.id, 'Выберите курс.',
@@ -251,6 +332,12 @@ async def course_st_h(message: types.Message, state: FSMContext):
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_course)
 async def education_form_st_h(message: types.Message, state: FSMContext):
     education_form_rudn_data = get_education_forms_names(message.text, DATA_DICT)
+
+    if type(education_form_rudn_data) == str:
+        await bot.send_message(message.chat.id, education_form_rudn_data)
+        await state.finish()
+        return
+
     DATA_DICT["course_node_id"] = education_form_rudn_data["course_node_id"]
 
     await bot.send_message(message.chat.id, 'Выберите форму обучения.',
@@ -261,7 +348,16 @@ async def education_form_st_h(message: types.Message, state: FSMContext):
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_educational_form)
 async def group_st_h(message: types.Message, state: FSMContext):
     group_rudn_data = get_groups_names(message.text, DATA_DICT)
+
+    if type(group_rudn_data) == str:
+        await bot.send_message(message.chat.id, group_rudn_data)
+        await state.finish()
+        return
+
     DATA_DICT["education_form_node_id"] = group_rudn_data["education_form_node_id"]
+
+    async with state.proxy() as proxy_data:
+        proxy_data['groups_names'] = group_rudn_data['names']
 
     await bot.send_message(message.chat.id, 'Выберите группу.',
                            reply_markup=common_kb.group_keyboard_list_reply(group_rudn_data["names"]))
@@ -270,6 +366,14 @@ async def group_st_h(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=ScheduleStatesStudents.waiting_for_group)
 async def schedule_name_st_h(message: types.Message, state: FSMContext):
+    async with state.proxy() as proxy_data:
+        groups_names = proxy_data['groups_names']
+
+    if message.text not in groups_names:
+        await bot.send_message(message.chat.id, f"Группы '{message.text}' не существует.")
+        await state.finish()
+        return
+
     DATA_DICT["group_name"] = message.text
 
     await bot.send_message(message.chat.id, 'Придумайте название своему расписанию.',
@@ -289,7 +393,10 @@ async def adding_data_st_h(message: types.Message, state: FSMContext):
     await bot.send_message(message.chat.id, insert_into_client_db(message.chat.id, message.text, data_dict_values),
                            reply_markup=types.ReplyKeyboardRemove())
 
-    await state.finish()
+    if get_default_client_schedule(message.chat.id) is None:
+        make_client_schedule_default(message.chat.id, message.text)
+
+    await menu_command(message=message, state=state)
 
 
 async def kinda_validator(message, state, elems, err_message):
@@ -325,6 +432,11 @@ async def delete_client_schedule_wait_for_schedule_h(message: types.Message, sta
     if await kinda_validator(message, state, names_to_validate, "Такого расписания не существует."):
         return
 
-    delete_client_schedule(message.chat.id, message.text)
+    if message.text == get_default_client_schedule(message.chat.id):
+        delete_client_schedule(message.chat.id, message.text)
+        make_client_schedule_default(message.chat.id, choice(list(get_client_schedule_names(message.chat.id).keys())))
+    else:
+        delete_client_schedule(message.chat.id, message.text)
+
     await bot.send_message(message.chat.id, "Расписание успешно удалено.", reply_markup=types.ReplyKeyboardRemove())
-    await state.finish()
+    await menu_command(message=message, state=state)

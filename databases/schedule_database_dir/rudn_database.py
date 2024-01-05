@@ -13,93 +13,105 @@ def connect_schedule_database():
 
 # Большой-большой костыль.
 def get_institutes_names(name):
-    node_id = int(list(
-        cur_exe_return(f"""
-                    SELECT id_row FROM Preparation WHERE Name = '{name}'""", connector_rudn_db))[0][0])
-
-    names_id = list(set(
-        cur_exe_return(f"""
-                    SELECT fakult_id FROM groups WHERE id_preparation == {node_id}""",
-                       connector_rudn_db)))
-    names_id = [i[0] for i in names_id]
-
-    names = []
-    for i in names_id:
-        names.append(list(set(
+    try:
+        node_id = int(list(
             cur_exe_return(f"""
-                            SELECT Name FROM Faculties WHERE id_row == {i}""",
-                           connector_rudn_db))))
-    names = [i[0][0] for i in names]
+                            SELECT id_row FROM Preparation WHERE Name = '{name}'""", connector_rudn_db))[0][0])
 
-    return {"names": names, "preparation_node_id": node_id}
+        names_id = list(set(
+            cur_exe_return(f"""
+                            SELECT fakult_id FROM groups WHERE id_preparation == {node_id}""",
+                           connector_rudn_db)))
+        names_id = [i[0] for i in names_id]
+
+        names = []
+        for i in names_id:
+            names.append(list(set(
+                cur_exe_return(f"""
+                                    SELECT Name FROM Faculties WHERE id_row == {i}""",
+                               connector_rudn_db))))
+        names = [i[0][0] for i in names]
+
+        return {"names": names, "preparation_node_id": node_id}
+    except IndexError:
+        return "Произошла ошибка. Скорее всего, были введены некорректные данные."
 
 
 ##################
 
 def get_courses_names(name, nodes: dict):
-    node_id = int(list(
-        cur_exe_return(f"""
-                SELECT id_row FROM Faculties WHERE Name = '{name}'""", connector_rudn_db))[0][0])
-
-    names_id = list(set(
-        cur_exe_return(f"""
-                SELECT id_curse FROM groups WHERE fakult_id == {node_id} AND id_preparation == {nodes["preparation_node_id"]}""",
-                       connector_rudn_db)))
-    names_id = [i[0] for i in names_id]
-
-    names = []
-    for i in names_id:
-        names.append(list(set(
+    try:
+        node_id = int(list(
             cur_exe_return(f"""
-                        SELECT Name FROM Course WHERE id_row == {i}""",
-                           connector_rudn_db))))
-    names = sorted([i[0][0] for i in names])
+                    SELECT id_row FROM Faculties WHERE Name = '{name}'""", connector_rudn_db))[0][0])
 
-    return {"names": names, "institute_node_id": node_id}
+        names_id = list(set(
+            cur_exe_return(f"""
+                    SELECT id_curse FROM groups WHERE fakult_id == {node_id} AND id_preparation == {nodes["preparation_node_id"]}""",
+                           connector_rudn_db)))
+        names_id = [i[0] for i in names_id]
+
+        names = []
+        for i in names_id:
+            names.append(list(set(
+                cur_exe_return(f"""
+                            SELECT Name FROM Course WHERE id_row == {i}""",
+                               connector_rudn_db))))
+        names = sorted([i[0][0] for i in names])
+
+        return {"names": names, "institute_node_id": node_id}
+    except IndexError:
+        return "Произошла ошибка. Скорее всего, были введены некорректные данные."
 
 
 ##################
 def get_education_forms_names(name, nodes: dict):
-    node_id = int(list(
-        cur_exe_return(f"""
-                SELECT id_row FROM Course WHERE Name = '{name}'""", connector_rudn_db))[0][0])
-
-    names_id = list(set(
-        cur_exe_return(f"""
-                SELECT id_form_study FROM groups 
-                WHERE id_curse == {node_id} AND fakult_id == {nodes["institute_node_id"]} AND id_preparation == {nodes["preparation_node_id"]}""",
-                       connector_rudn_db)))
-    names_id = [i[0] for i in names_id]
-
-    names = []
-    for i in names_id:
-        names.append(list(set(
+    try:
+        node_id = int(list(
             cur_exe_return(f"""
-                        SELECT Name FROM form_study WHERE id_row == {i}""",
-                           connector_rudn_db))))
-    names = [i[0][0] for i in names]
+                    SELECT id_row FROM Course WHERE Name = '{name}'""", connector_rudn_db))[0][0])
 
-    return {"names": names, "course_node_id": node_id}
+        names_id = list(set(
+            cur_exe_return(f"""
+                    SELECT id_form_study FROM groups 
+                    WHERE id_curse == {node_id} AND fakult_id == {nodes["institute_node_id"]} AND id_preparation == {nodes["preparation_node_id"]}""",
+                           connector_rudn_db)))
+        names_id = [i[0] for i in names_id]
+
+        names = []
+        for i in names_id:
+            names.append(list(set(
+                cur_exe_return(f"""
+                            SELECT Name FROM form_study WHERE id_row == {i}""",
+                               connector_rudn_db))))
+        names = [i[0][0] for i in names]
+
+        return {"names": names, "course_node_id": node_id}
+    except IndexError:
+        return "Произошла ошибка. Скорее всего, были введены некорректные данные."
 
 
 ##################
 def get_groups_names(name, nodes: dict):
-    node_id = int(list(
-        cur_exe_return(f"""
-                SELECT id_row FROM form_study WHERE Name = '{name}'""", connector_rudn_db))[0][0])
+    try:
+        node_id = int(list(
+            cur_exe_return(f"""
+                    SELECT id_row FROM form_study WHERE Name = '{name}'""", connector_rudn_db))[0][0])
 
-    names = list(set(
-        cur_exe_return(f"""
-                SELECT Name FROM groups
-                WHERE id_form_study == {node_id} AND id_curse == {nodes["course_node_id"]}
-                 AND fakult_id == {nodes["institute_node_id"]} AND id_preparation == {nodes["preparation_node_id"]}""",
-                       connector_rudn_db)))
-    names = [i[0] for i in names]
+        names = list(set(
+            cur_exe_return(f"""
+                    SELECT Name FROM groups
+                    WHERE id_form_study == {node_id} AND id_curse == {nodes["course_node_id"]}
+                     AND fakult_id == {nodes["institute_node_id"]} AND id_preparation == {nodes["preparation_node_id"]}""",
+                           connector_rudn_db)))
+        names = [i[0] for i in names]
 
-    return {"names": names, "education_form_node_id": node_id}
+        return {"names": names, "education_form_node_id": node_id}
+    except IndexError:
+        return "Произошла ошибка. Скорее всего, были введены некорректные данные."
 
 
-def get_week_objects(week_cur_day, week_id):
+def get_week_objects(week_cur_day, week_id, day, group_name):
     week_objects_list = list()
     for i in range(0, len(week_cur_day)):
         week_object = dict()
@@ -116,6 +128,8 @@ def get_week_objects(week_cur_day, week_id):
                                                                   WHERE id_row == {week_cur_day[i][5]}""",
                                                          connector_rudn_db))[0][0]
         week_object['teacher'] = week_cur_day[i][6]
+        week_object['day'] = day
+        week_object['group_name'] = group_name
 
         for key, value in zip(week_object.keys(), week_object.values()):
             week_object[key] = 'Сам(a) думай' if value == "NULL" else value
@@ -143,8 +157,10 @@ def get_client_schedule_from_rudn(schedule, day_of_week):
     lessons_upper_week_cur_day = [i[1:] for i in lessons_all_weeks_cur_day if i[5] == upper_week_id]
     lessons_lower_week_cur_day = [i[1:] for i in lessons_all_weeks_cur_day if i[5] == lower_week_id]
 
-    upper_week_objects = get_week_objects(lessons_upper_week_cur_day, upper_week_id)
-    lower_week_objects = get_week_objects(lessons_lower_week_cur_day, lower_week_id)
+    upper_week_objects = get_week_objects(lessons_upper_week_cur_day, upper_week_id, day_of_week_raw_dict[day_of_week],
+                                          schedule['group_name'])
+    lower_week_objects = get_week_objects(lessons_lower_week_cur_day, lower_week_id, day_of_week_raw_dict[day_of_week],
+                                          schedule['group_name'])
 
     schedule_dict = {'upper_week': upper_week_objects, 'lower_week': lower_week_objects}
 

@@ -9,9 +9,13 @@ def profile_inline_keyboard(schedule_names: list):
     return keyboard
 
 
-def profile_actions_keyboard():
+def profile_actions_keyboard(make_default):
     keyboard = InlineKeyboardMarkup(row_width=1)
-    keyboard.add(InlineKeyboardButton(text="Сделать основным", callback_data="profile_make_schedule_default"))
-    keyboard.add(InlineKeyboardButton(text="Удалить", callback_data="profile_delete_schedule"))
+
+    if not make_default:
+        keyboard.add(InlineKeyboardButton(text="Удалить", callback_data="profile_delete_schedule"))
+    else:
+        keyboard.add(InlineKeyboardButton(text="Сделать основным", callback_data="profile_make_schedule_default"))
+        keyboard.add(InlineKeyboardButton(text="Удалить", callback_data="profile_delete_schedule"))
 
     return keyboard
